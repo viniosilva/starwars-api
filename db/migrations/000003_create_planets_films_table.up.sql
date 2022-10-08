@@ -1,0 +1,7 @@
+CREATE TABLE planets_films (
+    planet_id int NOT NULL,
+    film_id int NOT NULL,
+    PRIMARY KEY (planet_id, film_id),
+    CONSTRAINT FK_PLANET_ID FOREIGN KEY (planet_id) REFERENCES planets(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT FK_FILM_ID FOREIGN KEY (film_id) REFERENCES films(id) ON DELETE CASCADE ON UPDATE CASCADE
+);

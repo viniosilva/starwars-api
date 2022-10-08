@@ -1,0 +1,195 @@
+definitions:
+  dto.ApiError:
+    properties:
+      error:
+        example: error
+        type: string
+    type: object
+  dto.FilmDto:
+    properties:
+      created_at:
+        example: "2014-12-09 13:50:49"
+        type: string
+      director:
+        example: George Lucas
+        type: string
+      id:
+        example: 1
+        type: integer
+      release_date:
+        example: "1977-05-25"
+        type: string
+      title:
+        example: A New Hope, Episode 4
+        type: string
+      updated_at:
+        example: "2014-12-20 20:58:18"
+        type: string
+    type: object
+  dto.HealthResponse:
+    properties:
+      status:
+        example: up
+        type: string
+    type: object
+  dto.PlanetDto:
+    properties:
+      climates:
+        example:
+        - arid
+        items:
+          type: string
+        type: array
+      created_at:
+        example: "2014-12-09 13:50:49"
+        type: string
+      films:
+        items:
+          $ref: '#/definitions/dto.FilmDto'
+        type: array
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Tatooine
+        type: string
+      terrains:
+        example:
+        - desert
+        items:
+          type: string
+        type: array
+      updated_at:
+        example: "2014-12-20 20:58:18"
+        type: string
+    type: object
+  dto.PlanetResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.PlanetDto'
+    type: object
+  dto.PlanetsResponse:
+    properties:
+      count:
+        example: 10
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/dto.PlanetDto'
+        type: array
+      next:
+        example: http://localhost:8080/api/planets?page=3&size=10
+        type: string
+      previous:
+        example: http://localhost:8080/api/planets?size=10
+        type: string
+      total:
+        example: 60
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /api/healthcheck:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.HealthResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/dto.HealthResponse'
+      summary: healthcheck
+      tags:
+      - health
+  /api/planets:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: size
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PlanetsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ApiError'
+      summary: find planets
+      tags:
+      - planet
+  /api/planets/{planetID}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Planet ID
+        in: path
+        name: planetID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ApiError'
+      summary: delete planet
+      tags:
+      - planet
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Planet ID
+        in: path
+        name: planetID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PlanetResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ApiError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ApiError'
+      summary: find planet by id
+      tags:
+      - planet
+swagger: "2.0"
