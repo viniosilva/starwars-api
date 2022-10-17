@@ -1,0 +1,12 @@
+output   = "internal/models"
+wipe     = true
+no-tests = true
+
+[mysql]
+  dbname  = "starwars"
+  host    = "localhost"
+  port    = 3306
+  user    = "luke"
+  pass    = ""
+  sslmode = "false"
+

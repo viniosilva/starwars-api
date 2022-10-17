@@ -36,7 +36,7 @@ func (m *MockFilmService) EXPECT() *MockFilmServiceMockRecorder {
 }
 
 // CreateFilms mocks base method.
-func (m *MockFilmService) CreateFilms(arg0 context.Context, arg1 []model.Film) error {
+func (m *MockFilmService) CreateFilms(arg0 context.Context, arg1 []*model.Film) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateFilms", arg0, arg1)
 	ret0, _ := ret[0].(error)

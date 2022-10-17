@@ -25,7 +25,7 @@ func Test_PlanetController_FindPlanets(t *testing.T) {
 		"should return empty planets list": {
 			mocking: func(planetService *mock.MockPlanetService) {
 				planetService.EXPECT().FindPlanets(gomock.Any(), gomock.Any(), gomock.Any()).
-					Return([]model.PlanetWithFilms{}, 0, nil)
+					Return([]model.Planet{}, 0, nil)
 			},
 			expectedStatusCode: http.StatusOK,
 			expectedBody: dto.PlanetsResponse{
@@ -50,12 +50,12 @@ func Test_PlanetController_FindPlanets(t *testing.T) {
 			ctx, r := gin.CreateTestContext(res)
 			ctx.Request = httptest.NewRequest("GET", "/api/planets", nil)
 
-			planetServiceMock := mock.NewMockPlanetService(ctrl)
+			mockPlanetService := mock.NewMockPlanetService(ctrl)
 
-			planetController := &controller.IPlanetController{PlanetService: planetServiceMock}
+			planetController := &controller.IPlanetController{PlanetService: mockPlanetService}
 			planetController.Configure(r.Group("/api"))
 
-			cs.mocking(planetServiceMock)
+			cs.mocking(mockPlanetService)
 
 			// when
 			planetController.FindPlanets(ctx)
@@ -80,10 +80,7 @@ func Test_PlanetController_FindPlanetByID(t *testing.T) {
 		"should return planet": {
 			mocking: func(planetService *mock.MockPlanetService) {
 				planetService.EXPECT().FindPlanetByID(gomock.Any(), gomock.Any()).
-					Return(&model.PlanetWithFilms{
-						Planet: model.Planet{ID: 1},
-						Films:  []model.Film{{ID: 1}},
-					}, nil)
+					Return(&model.Planet{ID: 1}, nil)
 			},
 			inputPlanetID:      1,
 			expectedStatusCode: http.StatusOK,
@@ -92,14 +89,7 @@ func Test_PlanetController_FindPlanetByID(t *testing.T) {
 					ID:        1,
 					CreatedAt: "0001-01-01 00:00:00",
 					UpdatedAt: "0001-01-01 00:00:00",
-					Films: []dto.FilmDto{
-						{
-							ID:          1,
-							CreatedAt:   "0001-01-01 00:00:00",
-							UpdatedAt:   "0001-01-01 00:00:00",
-							ReleaseDate: "0001-01-01",
-						},
-					}},
+				},
 			},
 		},
 	}
@@ -115,12 +105,12 @@ func Test_PlanetController_FindPlanetByID(t *testing.T) {
 			ctx.Params = append(ctx.Params, gin.Param{Key: "planetID", Value: fmt.Sprint(cs.inputPlanetID)})
 			ctx.Request = httptest.NewRequest("GET", "/api/planets", nil)
 
-			planetServiceMock := mock.NewMockPlanetService(ctrl)
+			mockPlanetService := mock.NewMockPlanetService(ctrl)
 
-			planetController := &controller.IPlanetController{PlanetService: planetServiceMock}
+			planetController := &controller.IPlanetController{PlanetService: mockPlanetService}
 			planetController.Configure(r.Group("/api"))
 
-			cs.mocking(planetServiceMock)
+			cs.mocking(mockPlanetService)
 
 			// when
 			planetController.FindPlanetByID(ctx)
@@ -161,12 +151,12 @@ func Test_PlanetController_DeletePlanet(t *testing.T) {
 			ctx.Params = append(ctx.Params, gin.Param{Key: "planetID", Value: fmt.Sprint(cs.inputPlanetID)})
 			ctx.Request = httptest.NewRequest("DELETE", "/api/planets", nil)
 
-			planetServiceMock := mock.NewMockPlanetService(ctrl)
+			mockPlanetService := mock.NewMockPlanetService(ctrl)
 
-			planetController := &controller.IPlanetController{PlanetService: planetServiceMock}
+			planetController := &controller.IPlanetController{PlanetService: mockPlanetService}
 			planetController.Configure(r.Group("/api"))
 
-			cs.mocking(planetServiceMock)
+			cs.mocking(mockPlanetService)
 
 			// when
 			planetController.DeletePlanet(ctx)

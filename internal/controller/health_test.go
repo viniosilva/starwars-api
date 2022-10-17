@@ -47,12 +47,12 @@ func Test_HealthController_Ping(t *testing.T) {
 			ctx, r := gin.CreateTestContext(res)
 			ctx.Request = httptest.NewRequest("GET", "/api/healthcheck", nil)
 
-			healthServiceMock := mock.NewMockHealthService(ctrl)
+			mockHealthService := mock.NewMockHealthService(ctrl)
 
-			healthController := &controller.IHealthController{HealthService: healthServiceMock}
+			healthController := &controller.IHealthController{HealthService: mockHealthService}
 			healthController.Configure(r.Group("/api"))
 
-			cs.mocking(healthServiceMock)
+			cs.mocking(mockHealthService)
 
 			// when
 			healthController.Ping(ctx)

@@ -50,13 +50,13 @@ func (impl *IPlanetController) FindPlanets(ctx *gin.Context) {
 
 	data := make([]dto.PlanetDto, len(planets))
 	for i := 0; i < len(planets); i += 1 {
-		films := make([]dto.FilmDto, len(planets[i].Films))
-		for j := 0; j < len(planets[i].Films); j += 1 {
-			films[j] = impl.ParseFilmDto(&planets[i].Films[j])
-		}
+		// films := make([]dto.FilmDto, len(planets[i].Films))
+		// for j := 0; j < len(planets[i].Films); j += 1 {
+		// 	films[j] = impl.ParseFilmDto(&planets[i].Films[j])
+		// }
 
 		data[i] = impl.ParsePlanetDto(&planets[i])
-		data[i].Films = films
+		// data[i].Films = films
 	}
 
 	ctx.JSON(http.StatusOK, dto.PlanetsResponse{
@@ -94,13 +94,13 @@ func (impl *IPlanetController) FindPlanetByID(ctx *gin.Context) {
 		return
 	}
 
-	films := make([]dto.FilmDto, len(planet.Films))
-	for j := 0; j < len(planet.Films); j += 1 {
-		films[j] = impl.ParseFilmDto(&planet.Films[j])
-	}
+	// films := make([]dto.FilmDto, len(planet.Films))
+	// for j := 0; j < len(planet.Films); j += 1 {
+	// 	films[j] = impl.ParseFilmDto(&planet.Films[j])
+	// }
 
 	data := impl.ParsePlanetDto(planet)
-	data.Films = films
+	// data.Films = films
 
 	ctx.JSON(http.StatusOK, dto.PlanetResponse{Data: data})
 }
@@ -131,14 +131,14 @@ func (impl *IPlanetController) DeletePlanet(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, gin.H{})
 }
 
-func (impl *IPlanetController) ParsePlanetDto(planet *model.PlanetWithFilms) dto.PlanetDto {
+func (impl *IPlanetController) ParsePlanetDto(planet *model.Planet) dto.PlanetDto {
 	return dto.PlanetDto{
 		ID:        planet.ID,
 		CreatedAt: planet.CreatedAt.Format("2006-01-02 15:04:05"),
 		UpdatedAt: planet.CreatedAt.Format("2006-01-02 15:04:05"),
 		Name:      planet.Name,
-		Climates:  planet.Climates,
-		Terrains:  planet.Terrains,
+		// Climates:  planet.Climates,
+		// Terrains:  planet.Terrains,
 	}
 }
 

@@ -3,6 +3,7 @@
 ## Requirements
 
 - [go](https://tip.golang.org/doc/go1.19)
+- [sqlboiler](https://github.com/volatiletech/sqlboiler)
 - [mockgen](https://github.com/golang/mock)
 - [golang-migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
 - [swaggo](https://github.com/swaggo/swag)
@@ -54,3 +55,12 @@ $ make test/cov
 # Tests benchmark service module
 $ make test/bench
 ```
+
+## Updating models with SQLBoiler
+
+On run a new database migration:
+
+- Add the mysql password: `xQlpKD95kp20Wa1JAX6O` on sqlboiler.toml at `[mysql] pass`
+- Run `make models`
+- Replace all packages to `model` on `internal/models/*`
+- Move all to `internal/model` and delele `models` folder

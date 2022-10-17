@@ -36,7 +36,7 @@ func (m *MockPlanetService) EXPECT() *MockPlanetServiceMockRecorder {
 }
 
 // CreatePlanets mocks base method.
-func (m *MockPlanetService) CreatePlanets(arg0 context.Context, arg1 []model.PlanetWithFilms) error {
+func (m *MockPlanetService) CreatePlanets(arg0 context.Context, arg1 []*model.Planet) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatePlanets", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -47,6 +47,20 @@ func (m *MockPlanetService) CreatePlanets(arg0 context.Context, arg1 []model.Pla
 func (mr *MockPlanetServiceMockRecorder) CreatePlanets(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePlanets", reflect.TypeOf((*MockPlanetService)(nil).CreatePlanets), arg0, arg1)
+}
+
+// CreateRelationshipFilmsToPlanets mocks base method.
+func (m *MockPlanetService) CreateRelationshipFilmsToPlanets(arg0 context.Context, arg1 map[int][]int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateRelationshipFilmsToPlanets", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateRelationshipFilmsToPlanets indicates an expected call of CreateRelationshipFilmsToPlanets.
+func (mr *MockPlanetServiceMockRecorder) CreateRelationshipFilmsToPlanets(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateRelationshipFilmsToPlanets", reflect.TypeOf((*MockPlanetService)(nil).CreateRelationshipFilmsToPlanets), arg0, arg1)
 }
 
 // DeletePlanet mocks base method.
@@ -64,10 +78,10 @@ func (mr *MockPlanetServiceMockRecorder) DeletePlanet(arg0, arg1 interface{}) *g
 }
 
 // FindPlanetByID mocks base method.
-func (m *MockPlanetService) FindPlanetByID(arg0 context.Context, arg1 int) (*model.PlanetWithFilms, error) {
+func (m *MockPlanetService) FindPlanetByID(arg0 context.Context, arg1 int) (*model.Planet, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindPlanetByID", arg0, arg1)
-	ret0, _ := ret[0].(*model.PlanetWithFilms)
+	ret0, _ := ret[0].(*model.Planet)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -79,10 +93,10 @@ func (mr *MockPlanetServiceMockRecorder) FindPlanetByID(arg0, arg1 interface{}) 
 }
 
 // FindPlanets mocks base method.
-func (m *MockPlanetService) FindPlanets(arg0 context.Context, arg1, arg2 int) ([]model.PlanetWithFilms, int, error) {
+func (m *MockPlanetService) FindPlanets(arg0 context.Context, arg1, arg2 int) ([]model.Planet, int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindPlanets", arg0, arg1, arg2)
-	ret0, _ := ret[0].([]model.PlanetWithFilms)
+	ret0, _ := ret[0].([]model.Planet)
 	ret1, _ := ret[1].(int)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2

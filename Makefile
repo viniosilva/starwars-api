@@ -4,6 +4,9 @@ export
 run:
 	go run main.go
 
+run/feed-database:
+	go run main.go feed_database
+
 .PHONY: mock
 mock:
 	go generate ./...
@@ -23,3 +26,6 @@ migrate:
 
 swag:
 	swag init
+
+models:
+	sqlboiler mysql --wipe
