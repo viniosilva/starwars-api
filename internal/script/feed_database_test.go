@@ -173,6 +173,25 @@ func Test_FeedDatabaseScript_Execute(t *testing.T) {
 			},
 			expectedErr: fmt.Errorf("error"),
 		},
+		"should throw error when create relationship films to planets": {
+			mocking: func(swapiRequest *mock.MockSwapiRequest, filmService *mock.MockFilmService, planetService *mock.MockPlanetService) {
+				swapiRequest.EXPECT().GetFilms(gomock.Any(), gomock.Any()).
+					Return(&model.SwapiFilmsResponse{
+						SwapiPaginateResponse: model.SwapiPaginateResponse{Count: 1},
+						Results:               []model.SwapiFilm{swapiFilm},
+					}, nil)
+				swapiRequest.EXPECT().GetPlanets(gomock.Any(), gomock.Any()).
+					Return(&model.SwapiPlanetsResponse{
+						SwapiPaginateResponse: model.SwapiPaginateResponse{Count: 1},
+						Results:               []model.SwapiPlanet{swapiPlanet},
+					}, nil)
+				filmService.EXPECT().CreateFilms(gomock.Any(), []*model.Film{&film}).Return(nil)
+				planetService.EXPECT().CreatePlanets(gomock.Any(), []*model.Planet{&planet}).Return(nil)
+				planetService.EXPECT().CreateRelationshipFilmsToPlanets(gomock.Any(), gomock.Any()).Return(fmt.Errorf("error"))
+
+			},
+			expectedErr: fmt.Errorf("error"),
+		},
 	}
 	for name, cs := range cases {
 		t.Run(name, func(t *testing.T) {

@@ -14,9 +14,9 @@ import (
 
 func Test_FilmService_CreateFilms(t *testing.T) {
 	var cases = map[string]struct {
-		mocking       func(db sqlmock.Sqlmock)
-		inputFilms    []*model.Film
-		expectedError error
+		mocking     func(db sqlmock.Sqlmock)
+		inputFilms  []*model.Film
+		expectedErr error
 	}{
 		"should create films": {
 			mocking: func(db sqlmock.Sqlmock) {
@@ -44,7 +44,7 @@ func Test_FilmService_CreateFilms(t *testing.T) {
 				Director:    "George Lucas",
 				ReleaseDate: time.Date(1977, 05, 25, 0, 0, 0, 0, time.UTC),
 			}},
-			expectedError: fmt.Errorf("error"),
+			expectedErr: fmt.Errorf("error"),
 		},
 	}
 	for name, cs := range cases {
@@ -64,7 +64,7 @@ func Test_FilmService_CreateFilms(t *testing.T) {
 			err = filmService.CreateFilms(context.Background(), cs.inputFilms)
 
 			// then
-			assert.Equal(t, cs.expectedError, err)
+			assert.Equal(t, cs.expectedErr, err)
 		})
 	}
 }

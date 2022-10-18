@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -27,6 +29,9 @@ const (
 )
 
 func main() {
+	gracefulShutdown := make(chan os.Signal, 1)
+	signal.Notify(gracefulShutdown, syscall.SIGINT, syscall.SIGTERM)
+
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetOutput(io.MultiWriter(os.Stdout, &lumberjack.Logger{
 		Filename: LOGS_PATH,
@@ -34,8 +39,9 @@ func main() {
 	}))
 
 	c := config.LoadConfig()
+	host := fmt.Sprintf("%s:%s", c.Server.Host, c.Server.Port)
 
-	db_conn_string := fmt.Sprintf("%s:%s@(%s:%s)/%s",
+	db_conn_string := fmt.Sprintf("%s:%s@(%s:%s)/%s?parseTime=true",
 		c.MySQL.Username, c.MySQL.Password, c.MySQL.Host, c.MySQL.Port, c.MySQL.Database)
 	db, err := sql.Open("mysql", db_conn_string)
 	if err != nil {
@@ -46,10 +52,17 @@ func main() {
 	planetService := &service.IPlanetService{DB: db}
 
 	if len(os.Args) > 1 && os.Args[1] == ARG_FEED_DATABASE {
-		runScript(filmService, planetService)
+		go runScript(filmService, planetService)
 	} else {
-		runApi(planetService)
+		go runApi(host, planetService)
 	}
+
+	<-gracefulShutdown
+	if err := db.Close(); err != nil {
+		logrus.WithField("trace", "main").Error(err)
+	}
+
+	logrus.WithField("trace", "main").Info("shutdown")
 }
 
 func runScript(filmService service.FilmService, planetService service.PlanetService) {
@@ -68,9 +81,7 @@ func runScript(filmService service.FilmService, planetService service.PlanetServ
 // @title		Star Wars API
 // @version		1.0
 // @BasePath	/api
-func runApi(planetService service.PlanetService) {
-	c := config.LoadConfig()
-
+func runApi(host string, planetService service.PlanetService) {
 	r := gin.Default()
 	r.Use(config.GinLogger())
 
@@ -79,12 +90,14 @@ func runApi(planetService service.PlanetService) {
 	healthService := &service.IHealthService{}
 
 	healthController := &controller.IHealthController{HealthService: healthService}
-	planetController := &controller.IPlanetController{PlanetService: planetService}
+	planetController := &controller.IPlanetController{
+		Host:          fmt.Sprintf("http://%s/api/planets", host),
+		PlanetService: planetService,
+	}
 
 	healthController.Configure(router)
 	planetController.Configure(router)
 
-	host := fmt.Sprintf("%s:%s", c.Server.Host, c.Server.Port)
 	docs.SwaggerInfo.Host = host
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

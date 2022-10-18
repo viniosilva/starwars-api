@@ -68,6 +68,18 @@ const docTemplate = `{
                         "description": "size",
                         "name": "size",
                         "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "loadFilms",
+                        "name": "loadFilms",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "name",
+                        "name": "name",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -105,6 +117,12 @@ const docTemplate = `{
                         "name": "planetID",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "loadFilms",
+                        "name": "loadFilms",
+                        "in": "query"
                     }
                 ],
                 "responses": {

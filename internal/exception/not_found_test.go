@@ -9,12 +9,12 @@ import (
 
 func Test_Exception_NotFoundException(t *testing.T) {
 	var cases = map[string]struct {
-		inputErrorMessage    string
-		expectedErrorMessage string
+		inputErrorMessage  string
+		expectedErrMessage string
 	}{
 		"should return error message": {
-			inputErrorMessage:    "error",
-			expectedErrorMessage: "error",
+			inputErrorMessage:  "error",
+			expectedErrMessage: "error",
 		},
 	}
 	for name, cs := range cases {
@@ -23,7 +23,7 @@ func Test_Exception_NotFoundException(t *testing.T) {
 			error := exception.NotFoundException{Message: cs.inputErrorMessage}
 
 			// then
-			assert.Equal(t, cs.expectedErrorMessage, error.Error())
+			assert.Equal(t, cs.expectedErrMessage, error.Error())
 		})
 	}
 }

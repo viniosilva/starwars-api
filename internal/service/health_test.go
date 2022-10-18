@@ -10,7 +10,7 @@ import (
 
 func Test_HealthService_Ping(t *testing.T) {
 	var cases = map[string]struct {
-		expectedError error
+		expectedErr error
 	}{
 		"should ping": {},
 	}
@@ -23,7 +23,7 @@ func Test_HealthService_Ping(t *testing.T) {
 			err := healthService.Ping(context.Background())
 
 			// then
-			assert.Equal(t, cs.expectedError, err)
+			assert.Equal(t, cs.expectedErr, err)
 		})
 	}
 }

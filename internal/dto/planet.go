@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/viniosilva/starwars-api/internal/model"
+
 type PlanetDto struct {
 	ID        int       `json:"id" example:"1"`
 	CreatedAt string    `json:"created_at,omitempty" example:"2014-12-09 13:50:49"`
@@ -17,4 +19,11 @@ type PlanetResponse struct {
 type PlanetsResponse struct {
 	Pagination
 	Data []PlanetDto `json:"data"`
+}
+
+type FindPlanetsAndTotalResult struct {
+	Count int
+	Total int64
+	Next  bool
+	Data  []*model.Planet
 }

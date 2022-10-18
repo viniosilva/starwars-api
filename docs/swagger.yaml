@@ -121,6 +121,14 @@ paths:
         in: query
         name: size
         type: integer
+      - description: loadFilms
+        in: query
+        name: loadFilms
+        type: boolean
+      - description: name
+        in: query
+        name: name
+        type: string
       produces:
       - application/json
       responses:
@@ -170,6 +178,10 @@ paths:
         name: planetID
         required: true
         type: integer
+      - description: loadFilms
+        in: query
+        name: loadFilms
+        type: boolean
       produces:
       - application/json
       responses:
