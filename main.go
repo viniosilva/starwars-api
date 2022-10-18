@@ -48,13 +48,14 @@ func main() {
 		panic(err)
 	}
 
+	healthService := &service.IHealthService{DB: db}
 	filmService := &service.IFilmService{DB: db}
 	planetService := &service.IPlanetService{DB: db}
 
 	if len(os.Args) > 1 && os.Args[1] == ARG_FEED_DATABASE {
 		go runScript(filmService, planetService)
 	} else {
-		go runApi(host, planetService)
+		go runApi(host, healthService, planetService)
 	}
 
 	<-gracefulShutdown
@@ -81,13 +82,11 @@ func runScript(filmService service.FilmService, planetService service.PlanetServ
 // @title		Star Wars API
 // @version		1.0
 // @BasePath	/api
-func runApi(host string, planetService service.PlanetService) {
+func runApi(host string, healthService service.HealthService, planetService service.PlanetService) {
 	r := gin.Default()
 	r.Use(config.GinLogger())
 
 	router := r.Group("/api")
-
-	healthService := &service.IHealthService{}
 
 	healthController := &controller.IHealthController{HealthService: healthService}
 	planetController := &controller.IPlanetController{
