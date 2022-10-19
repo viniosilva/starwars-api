@@ -11,7 +11,7 @@
 ## Instalação
 
 ```bash
-$ go get
+$ make install
 ```
 
 ## Configuração
