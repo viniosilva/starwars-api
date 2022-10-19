@@ -50,7 +50,12 @@ func (impl *IPlanetController) FindPlanetsAndTotal(ctx *gin.Context) {
 		loadFilms = true
 	}
 
-	res, err := impl.PlanetService.FindPlanetsAndTotal(ctx, page, size, loadFilms)
+	opts := make([]service.Option, 1)
+	if n := ctx.Query("name"); n != "" {
+		opts[0] = service.OptionWhere("name like ?", n)
+	}
+
+	res, err := impl.PlanetService.FindPlanetsAndTotal(ctx, page, size, loadFilms, opts...)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, dto.ApiError{Error: "internal server error"})
 		return

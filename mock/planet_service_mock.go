@@ -11,6 +11,7 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	dto "github.com/viniosilva/starwars-api/internal/dto"
 	model "github.com/viniosilva/starwars-api/internal/model"
+	service "github.com/viniosilva/starwars-api/internal/service"
 )
 
 // MockPlanetService is a mock of PlanetService interface.
@@ -94,16 +95,21 @@ func (mr *MockPlanetServiceMockRecorder) FindPlanetByID(arg0, arg1, arg2 interfa
 }
 
 // FindPlanetsAndTotal mocks base method.
-func (m *MockPlanetService) FindPlanetsAndTotal(arg0 context.Context, arg1, arg2 int, arg3 bool) (dto.FindPlanetsAndTotalResult, error) {
+func (m *MockPlanetService) FindPlanetsAndTotal(arg0 context.Context, arg1, arg2 int, arg3 bool, arg4 ...service.Option) (dto.FindPlanetsAndTotalResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindPlanetsAndTotal", arg0, arg1, arg2, arg3)
+	varargs := []interface{}{arg0, arg1, arg2, arg3}
+	for _, a := range arg4 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "FindPlanetsAndTotal", varargs...)
 	ret0, _ := ret[0].(dto.FindPlanetsAndTotalResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindPlanetsAndTotal indicates an expected call of FindPlanetsAndTotal.
-func (mr *MockPlanetServiceMockRecorder) FindPlanetsAndTotal(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+func (mr *MockPlanetServiceMockRecorder) FindPlanetsAndTotal(arg0, arg1, arg2, arg3 interface{}, arg4 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindPlanetsAndTotal", reflect.TypeOf((*MockPlanetService)(nil).FindPlanetsAndTotal), arg0, arg1, arg2, arg3)
+	varargs := append([]interface{}{arg0, arg1, arg2, arg3}, arg4...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindPlanetsAndTotal", reflect.TypeOf((*MockPlanetService)(nil).FindPlanetsAndTotal), varargs...)
 }

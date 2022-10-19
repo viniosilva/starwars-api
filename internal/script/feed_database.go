@@ -224,10 +224,6 @@ func (impl *IFeedDatabaseScript) FormatStringDate(strDate string) string {
 }
 
 func (impl *IFeedDatabaseScript) ParseToStrArrayJSON(value string) []byte {
-	if value == "" {
-		return []byte{}
-	}
-
 	values := strings.Split(value, ",")
 	for i := 0; i < len(values); i += 1 {
 		values[i] = strings.TrimSpace(values[i])

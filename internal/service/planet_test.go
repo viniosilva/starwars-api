@@ -122,6 +122,7 @@ func Test_PlanetService_FindPlanetsAndTotal(t *testing.T) {
 		inputPage      int
 		inputSize      int
 		inputLoadFilms bool
+		inputOptions   []service.Option
 		expectedRes    dto.FindPlanetsAndTotalResult
 		expectedErr    error
 	}{
@@ -156,6 +157,24 @@ func Test_PlanetService_FindPlanetsAndTotal(t *testing.T) {
 				Count: 1,
 				Total: 3,
 				Next:  true,
+				Data:  []*model.Planet{{ID: 1}},
+			},
+		},
+		"should return planets list when filter name is tatooine": {
+			mocking: func(db sqlmock.Sqlmock) {
+				db.ExpectBegin()
+				db.ExpectQuery("SELECT").WillReturnRows(sqlmock.NewRows([]string{model.PlanetColumns.ID}).
+					AddRow(1))
+				db.ExpectQuery("SELECT").WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
+				db.ExpectCommit()
+			},
+			inputPage:    1,
+			inputSize:    1,
+			inputOptions: []service.Option{service.OptionWhere("name like ?", "tatooine")},
+			expectedRes: dto.FindPlanetsAndTotalResult{
+				Count: 1,
+				Total: 1,
+				Next:  false,
 				Data:  []*model.Planet{{ID: 1}},
 			},
 		},
@@ -225,7 +244,7 @@ func Test_PlanetService_FindPlanetsAndTotal(t *testing.T) {
 			cs.mocking(mockDB)
 
 			// when
-			res, err := planetService.FindPlanetsAndTotal(context.Background(), cs.inputPage, cs.inputSize, cs.inputLoadFilms)
+			res, err := planetService.FindPlanetsAndTotal(context.Background(), cs.inputPage, cs.inputSize, cs.inputLoadFilms, cs.inputOptions...)
 
 			// then
 			assert.Equal(t, cs.expectedRes, res)

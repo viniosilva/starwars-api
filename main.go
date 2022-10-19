@@ -77,6 +77,7 @@ func runScript(filmService service.FilmService, planetService service.PlanetServ
 	if err := feedDatabase.Execute(); err != nil {
 		panic(err)
 	}
+	os.Exit(1)
 }
 
 // @title		Star Wars API

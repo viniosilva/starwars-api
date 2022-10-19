@@ -24,13 +24,14 @@ func Test_PlanetController_FindPlanetsAndTotal(t *testing.T) {
 		inputPage          int
 		inputSize          int
 		inputLoadFilms     bool
+		inputName          string
 		expectedStatusCode int
 		expectedBody       dto.PlanetsResponse
 		expectedErr        dto.ApiError
 	}{
 		"should return planets list": {
 			mocking: func(planetService *mock.MockPlanetService) {
-				planetService.EXPECT().FindPlanetsAndTotal(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+				planetService.EXPECT().FindPlanetsAndTotal(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 					Return(dto.FindPlanetsAndTotalResult{Count: 1, Total: 1, Next: false, Data: []*model.Planet{{ID: 1}}}, nil)
 			},
 			inputLoadFilms:     true,
@@ -49,7 +50,7 @@ func Test_PlanetController_FindPlanetsAndTotal(t *testing.T) {
 		},
 		"should return planets list when there are pages": {
 			mocking: func(planetService *mock.MockPlanetService) {
-				planetService.EXPECT().FindPlanetsAndTotal(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+				planetService.EXPECT().FindPlanetsAndTotal(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 					Return(dto.FindPlanetsAndTotalResult{Count: 1, Total: 3, Next: true, Data: []*model.Planet{{ID: 1}}}, nil)
 			},
 			inputPage:          2,
@@ -70,9 +71,29 @@ func Test_PlanetController_FindPlanetsAndTotal(t *testing.T) {
 				}},
 			},
 		},
+		"should return planets list when name is tatooine": {
+			mocking: func(planetService *mock.MockPlanetService) {
+				planetService.EXPECT().FindPlanetsAndTotal(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+					Return(dto.FindPlanetsAndTotalResult{Count: 1, Total: 1, Next: false, Data: []*model.Planet{{ID: 1, Name: "Tatooine"}}}, nil)
+			},
+			inputName:          "tatooine",
+			expectedStatusCode: http.StatusOK,
+			expectedBody: dto.PlanetsResponse{
+				Pagination: dto.Pagination{
+					Count: 1,
+					Total: 1,
+				},
+				Data: []dto.PlanetDto{{
+					ID:        1,
+					Name:      "Tatooine",
+					CreatedAt: "0001-01-01 00:00:00",
+					UpdatedAt: "0001-01-01 00:00:00",
+				}},
+			},
+		},
 		"should return empty planets list": {
 			mocking: func(planetService *mock.MockPlanetService) {
-				planetService.EXPECT().FindPlanetsAndTotal(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+				planetService.EXPECT().FindPlanetsAndTotal(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 					Return(dto.FindPlanetsAndTotalResult{}, nil)
 			},
 			expectedStatusCode: http.StatusOK,
@@ -88,7 +109,7 @@ func Test_PlanetController_FindPlanetsAndTotal(t *testing.T) {
 		},
 		"should throw internal server error": {
 			mocking: func(planetService *mock.MockPlanetService) {
-				planetService.EXPECT().FindPlanetsAndTotal(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+				planetService.EXPECT().FindPlanetsAndTotal(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 					Return(dto.FindPlanetsAndTotalResult{}, fmt.Errorf("error"))
 			},
 			expectedStatusCode: http.StatusInternalServerError,
@@ -108,6 +129,9 @@ func Test_PlanetController_FindPlanetsAndTotal(t *testing.T) {
 			q := fmt.Sprintf("?page=%d&size=%d", cs.inputPage, cs.inputSize)
 			if cs.inputLoadFilms {
 				q += "&loadFilms=true"
+			}
+			if cs.inputName != "" {
+				q += fmt.Sprintf("&name=%s", cs.inputName)
 			}
 
 			ctx.Request = httptest.NewRequest("GET", "/api/planets"+q, nil)

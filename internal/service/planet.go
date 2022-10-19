@@ -18,7 +18,7 @@ import (
 type PlanetService interface {
 	CreatePlanets(ctx context.Context, planets []*model.Planet) error
 	CreateRelationshipFilmsToPlanets(ctx context.Context, relationships map[int][]int) error
-	FindPlanetsAndTotal(ctx context.Context, page, size int, loadFilms bool) (dto.FindPlanetsAndTotalResult, error)
+	FindPlanetsAndTotal(ctx context.Context, page, size int, loadFilms bool, opts ...Option) (dto.FindPlanetsAndTotalResult, error)
 	FindPlanetByID(ctx context.Context, planetID int, loadFilms bool) (*model.Planet, error)
 	DeletePlanet(ctx context.Context, planetID int) error
 }
@@ -82,7 +82,7 @@ func (impl *IPlanetService) CreateRelationshipFilmsToPlanets(ctx context.Context
 	return nil
 }
 
-func (impl *IPlanetService) FindPlanetsAndTotal(ctx context.Context, page, size int, loadFilms bool) (dto.FindPlanetsAndTotalResult, error) {
+func (impl *IPlanetService) FindPlanetsAndTotal(ctx context.Context, page, size int, loadFilms bool, opts ...Option) (dto.FindPlanetsAndTotalResult, error) {
 	offset := 0
 	if page > 1 {
 		offset = size * (page - 1)
@@ -100,6 +100,12 @@ func (impl *IPlanetService) FindPlanetsAndTotal(ctx context.Context, page, size 
 		qm.Offset(offset),
 		whereIsNotDeleted,
 	}
+
+	where, arg := GetOptionWhere(opts)
+	if where != "" {
+		qms = append(qms, qm.And(where, arg))
+	}
+
 	if loadFilms {
 		qms = append(qms, qm.Load("Films"))
 	}
@@ -115,7 +121,12 @@ func (impl *IPlanetService) FindPlanetsAndTotal(ctx context.Context, page, size 
 		return dto.FindPlanetsAndTotalResult{}, err
 	}
 
-	total, err := model.Planets(whereIsNotDeleted).Count(ctx, tx)
+	qms = []qm.QueryMod{whereIsNotDeleted}
+	if where != "" {
+		qms = append(qms, qm.And(where, arg))
+	}
+
+	total, err := model.Planets(qms...).Count(ctx, tx)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{"trace": "internal.service.planet.FindPlanets:planets.count"}).Error(err)
 		if err := tx.Rollback(); err != nil {

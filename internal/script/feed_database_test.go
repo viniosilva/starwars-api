@@ -565,7 +565,7 @@ func Test_FeedDatabaseScript_ParseToStrArrayJSON(t *testing.T) {
 		},
 		"should return empty string array when value is empty": {
 			inputValue:     "",
-			expectedValues: nil,
+			expectedValues: []string{""},
 		},
 	}
 	for name, cs := range cases {
